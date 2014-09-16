@@ -40,6 +40,6 @@
   ],
   "dependencies": {
     "async": "^0.9.0",
-    "moonstick-scss-compiler": "0.0.1"
+    "moonstick-scss-compiler": "~0.0.1"
   }
 }
