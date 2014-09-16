@@ -1,0 +1,15 @@
+{
+    "type": "homepageLayout",
+    "slots": {
+        ">>header": {
+            "file": "header.json"
+        },
+        "cookieMessage": {
+            "components": [
+                {
+                    "type": "cookieMessage"
+                }
+            ]
+        }
+    }
+}
