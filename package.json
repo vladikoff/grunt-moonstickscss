@@ -1,7 +1,7 @@
 {
   "name": "grunt-moonstickscss",
   "description": "Compile SCSS on a page by page basis",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "",
   "author": {
     "name": "Alex Meah",
