@@ -1,5 +1,5 @@
 {
-  "name": "grunt-lateroomsScss",
+  "name": "grunt-moonstickscss",
   "description": "Compile SCSS on a page by page basis",
   "version": "1.0.0",
   "homepage": "",
@@ -40,6 +40,6 @@
   ],
   "dependencies": {
     "async": "^0.9.0",
-    "lateroomsSassCompiler": "git+https://AlexMeah:1503Carol@bitbucket.org/AlexMeah/lateroomssasscompiler.git"
+    "moonstick-scss-compiler": "0.0.1"
   }
 }

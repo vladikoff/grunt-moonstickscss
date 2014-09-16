@@ -1,5 +1,5 @@
 /*
- * grunt-lateroomsScss
+ * grunt-moonstickscss
  *
  *
  * Copyright (c) 2014 Alex Meah
@@ -29,8 +29,8 @@ module.exports = function (grunt) {
         },
 
         // Configuration to be run (and then tested).
-        lateroomsScss: {
-            default_options: {
+        moonstickscss: {
+            all_custom_options: {
                 options: {
                     brand: 'test',
                     baseSassFile: 'test/fixtures/css/global.scss',
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
 
     // Whenever the "test" task is run, first clean the "tmp" dir, then run this
     // plugin's task(s), then test the result.
-    grunt.registerTask('test', ['clean', 'lateroomsScss', 'nodeunit']);
+    grunt.registerTask('test', ['clean', 'moonstickscss', 'nodeunit']);
 
     // By default, lint and run all tests.
     grunt.registerTask('default', ['jshint', 'test']);

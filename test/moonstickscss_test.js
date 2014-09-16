@@ -22,17 +22,17 @@ var grunt = require('grunt');
     test.ifError(value)
 */
 
-exports.lateroomsScss = {
+exports.moonstickscss = {
     setUp: function (done) {
         // setup here if necessary
         done();
     },
-    default_options: function (test) {
+    all_custom_options: function (test) {
         test.expect(1);
 
         var actual = grunt.file.read('tmp/test.css');
         var expected = grunt.file.read('test/expected.scss');
-        test.equal(actual, expected, 'should compile all the tings.');
+        test.equal(actual, expected, 'should compile the fixtures using custom options.');
 
         test.done();
     }
