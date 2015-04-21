@@ -2,7 +2,7 @@
     "type": "homepageLayout",
     "slots": {
         ">>header": {
-            "file": "header.json"
+            "file": "/common/header.json"
         },
         "cookieMessage": {
             "components": [
