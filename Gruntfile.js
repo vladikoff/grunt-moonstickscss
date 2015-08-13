@@ -30,12 +30,17 @@ module.exports = function (grunt) {
 
         // Configuration to be run (and then tested).
         moonstickscss: {
-            all_custom_options: {
+            options: {
+                baseSassFile: 'test/fixtures/css/global.scss',
+                baseCommonFile: 'test/fixtures/css/global.scss'
+            },
+            laterooms: {
                 options: {
                     brand: 'test',
-                    baseSassFile: 'test/fixtures/css/global.scss',
+                    brandBase: 'test/fixtures/css',
                     componentBase: 'test/fixtures/components',
-                    filesToPrepend: ['../test-branding.scss']
+                    skipCommon: ['roomAvailability'],
+                    map: false
                 },
                 expand: true,
                 cwd: 'test/fixtures/pages',

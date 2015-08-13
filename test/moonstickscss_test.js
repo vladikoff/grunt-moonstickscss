@@ -28,11 +28,15 @@ exports.moonstickscss = {
         done();
     },
     all_custom_options: function (test) {
-        test.expect(1);
+        test.expect(2);
 
         var actual = grunt.file.read('tmp/test.css');
         var expected = grunt.file.read('test/expected.scss');
         test.equal(actual, expected, 'should compile the fixtures using custom options.');
+
+        var actualCommon = grunt.file.read('tmp/common.css');
+        var expectedCommon = grunt.file.read('test/expected-common.scss');
+        test.equal(actualCommon, expectedCommon, 'should compile the fixtures using custom options.');
 
         test.done();
     }
