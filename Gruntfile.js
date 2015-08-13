@@ -32,7 +32,8 @@ module.exports = function (grunt) {
         moonstickscss: {
             options: {
                 baseSassFile: 'test/fixtures/css/global.scss',
-                baseCommonFile: 'test/fixtures/css/global.scss'
+                baseCommonFile: 'test/fixtures/css/global.scss',
+                styleDirectory: ''
             },
             laterooms: {
                 options: {

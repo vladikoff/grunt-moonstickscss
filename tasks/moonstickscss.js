@@ -50,7 +50,7 @@ module.exports = function (grunt) {
                 sourceMapContents: opts.map,
                 sourceComments: opts.map,
                 outFile: '/whyisthishere?/',
-                includePaths: [path.join(process.cwd(), 'app/assets/styles')]
+                includePaths: [path.join(process.cwd(), opts.styleDirectory)]
             });
         }
 
@@ -76,18 +76,18 @@ module.exports = function (grunt) {
             });
 
             var seen = {};
-            var common = _.uniq(_.flatten(pages).reduce(function (prev, curr) {
-                if (opts.skipCommon.indexOf(curr) > -1) {
-                    return prev;
+            var common = _.uniq(_.flatten(pages).reduce(function (commonComponents, componentName) {
+                if (opts.skipCommon.indexOf(componentName) > -1) {
+                    return commonComponents;
                 }
 
-                if (seen.hasOwnProperty(curr)) {
-                    prev.push(curr);
-                    return prev;
+                if (seen.hasOwnProperty(componentName)) {
+                    commonComponents.push(componentName);
+                    return commonComponents;
                 }
 
-                seen[curr] = 1;
-                return prev;
+                seen[componentName] = 1;
+                return commonComponents;
             }, []));
 
             pages
