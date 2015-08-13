@@ -16,6 +16,23 @@ function getComponentsFromSlots(page) {
     });
 }
 
+function getCommonComponents(opts, pages) {
+    var seen = {};
+    return _.uniq(_.flatten(pages).reduce(function (commonComponents, componentName) {
+        if (opts.skipCommon.indexOf(componentName) > -1) {
+            return commonComponents;
+        }
+
+        if (seen.hasOwnProperty(componentName)) {
+            commonComponents.push(componentName);
+            return commonComponents;
+        }
+
+        seen[componentName] = 1;
+        return commonComponents;
+    }, []));
+}
+
 module.exports = function (grunt) {
     grunt.registerMultiTask('moonstickscss', 'A task for compiling moonsticks assets', function () {
         var opts = this.options();
@@ -74,21 +91,7 @@ module.exports = function (grunt) {
             var dest = allComponentsFromPage.map(function (page) {
                 return page.dest;
             });
-
-            var seen = {};
-            var common = _.uniq(_.flatten(pages).reduce(function (commonComponents, componentName) {
-                if (opts.skipCommon.indexOf(componentName) > -1) {
-                    return commonComponents;
-                }
-
-                if (seen.hasOwnProperty(componentName)) {
-                    commonComponents.push(componentName);
-                    return commonComponents;
-                }
-
-                seen[componentName] = 1;
-                return commonComponents;
-            }, []));
+            var common = getCommonComponents(opts, pages);
 
             pages
                 .map(function (components) {
@@ -114,7 +117,8 @@ module.exports = function (grunt) {
                 .map(function (data) {
                     return data + fs.readFileSync(path.join(process.cwd(), opts.baseCommonFile));
                 })
-                .map(renderCssFromData).forEach(function (css) {
+                .map(renderCssFromData)
+                .forEach(function (css) {
                     grunt.file.write(path.join(dest[0], '../common.css'), css.css);
                     grunt.log.writeln('File "' + path.join(dest[0], '../common.css') + '" created.');
                 });
