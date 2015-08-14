@@ -1,41 +1,130 @@
-/*
- * grunt-moonstickscss
- *
- *
- * Copyright (c) 2014 Alex Meah
- * Licensed under the MIT license.
- */
+var Promise = require('bluebird');
+var sass = require('node-sass');
+var _ = require('lodash');
+var extendJson = require('extend-json');
+var path = require('path');
+var fs = require('fs');
+var glob = require('glob');
 
-'use strict';
+function getComponentsFromSlots(page) {
+    return Object.keys(page.slots || {}).map(function (slotName) {
+        return ((page.slots[slotName] || {}).components || []).map(function (component) {
+            return [component.type].concat((component.components || []).map(function (component) {
+                return component.type;
+            }));
+        });
+    });
+}
 
-var MoonstickSassCompiler = require('moonstick-scss-compiler');
-var async = require('async');
+function getCommonComponents(opts, pages) {
+    var seen = {};
+    return _.uniq(_.flatten(pages).reduce(function (commonComponents, componentName) {
+        if (opts.skipCommon.indexOf(componentName) > -1) {
+            return commonComponents;
+        }
+
+        if (seen.hasOwnProperty(componentName)) {
+            commonComponents.push(componentName);
+            return commonComponents;
+        }
+
+        seen[componentName] = 1;
+        return commonComponents;
+    }, []));
+}
 
 module.exports = function (grunt) {
+    grunt.registerMultiTask('moonstickscss', 'A task for compiling moonsticks assets', function () {
+        var opts = this.options();
 
-    grunt.registerMultiTask('moonstickscss', 'Compile SCSS on a page by page basis', function () {
-        // Merge task-specific and/or target-specific options with these defaults.
-        var options = this.options({
-            basePath: process.cwd()
-        });
-        var done = this.async();
+        function globComponentStylesheets (components) {
+            var componentsMiniMap = process.cwd() + '/' + opts.componentBase + '/{' + components.join(',');
 
+            return glob.sync(componentsMiniMap + '}/assets/styles/*.scss')
+                .concat(glob.sync(componentsMiniMap + '}/assets/styles/' + opts.brand + '/*.scss'));
+        }
 
-        // Iterate over all specified file groups.
-        async.each(this.files, function (f, callback) {
-            new MoonstickSassCompiler(f.src[0], options)
-                .then(function (css) {
-                    // Write the destination file.
-                    grunt.file.write(f.dest, css);
+        function addStylesheetToSassData (stylesheets) {
+            return stylesheets.reduce(function (data, stylesheet) {
+                data.push(['@import "', stylesheet.replace(process.cwd() + '/', ''), '";'].join(''));
+                return data;
+            }, []).join('');
+        }
 
-                    // Print a success message.
-                    grunt.log.writeln('File "' + f.dest + '" created.');
-                    callback();
+        function prefixBaseFileToSassData (data) {
+            return '@import "' + opts.baseSassFile + '";\n' + data;
+        }
+
+        function prefixBrandToSassData (data) {
+            return '@import "' + opts.brandBase + '/_' + opts.brand + '.scss";\n' + data;
+        }
+
+        function renderCssFromData (data) {
+            return sass.renderSync({
+                data: data,
+                sourceMap: opts.map,
+                sourceMapEmbed: opts.map,
+                sourceMapContents: opts.map,
+                sourceComments: opts.map,
+                outFile: '/whyisthishere?/',
+                includePaths: [path.join(process.cwd(), opts.styleDirectory)]
+            });
+        }
+
+        Promise.map(this.files, function (f) {
+            var commonJsonPath = path.join(process.cwd(), f.src[0], '../');
+            var pageConfigJson = path.join(process.cwd(), f.src[0]);
+
+            return extendJson(JSON.parse(fs.readFileSync(pageConfigJson, 'utf8')), {
+                pointer: '>>',
+                path: commonJsonPath
+            }).then(getComponentsFromSlots).then(function (s) {
+                return {
+                    dest: f.dest,
+                    components: _.uniq(_.flatten(s))
+                };
+            });
+        }).then(function (allComponentsFromPage) {
+            var pages = allComponentsFromPage.map(function (page) {
+                return page.components;
+            });
+            var dest = allComponentsFromPage.map(function (page) {
+                return page.dest;
+            });
+            var common = getCommonComponents(opts, pages);
+
+            pages
+                .map(function (components) {
+                    return components.filter(function (componentName) {
+                        return common.indexOf(componentName) === -1;
+                    });
                 })
-                .catch(function (err) {
-                    grunt.fail.fatal(err);
-                    callback();
+                .map(globComponentStylesheets)
+                .map(addStylesheetToSassData)
+                .map(prefixBaseFileToSassData)
+                .map(prefixBrandToSassData)
+                .map(renderCssFromData)
+                .forEach(function (css, i) {
+                    grunt.file.write(dest[i], css.css);
+                    grunt.log.writeln('File "' + dest[i] + '" created.');
                 });
-        }, done);
+
+            [common]
+                .map(globComponentStylesheets)
+                .map(addStylesheetToSassData)
+                .map(prefixBaseFileToSassData)
+                .map(prefixBrandToSassData)
+                .map(function (data) {
+                    return data + fs.readFileSync(path.join(process.cwd(), opts.baseCommonFile));
+                })
+                .map(renderCssFromData)
+                .forEach(function (css) {
+                    grunt.file.write(path.join(dest[0], '../common.css'), css.css);
+                    grunt.log.writeln('File "' + path.join(dest[0], '../common.css') + '" created.');
+                });
+
+        }).catch(function (err) {
+            grunt.fail.fatal(err);
+        });
     });
 };
