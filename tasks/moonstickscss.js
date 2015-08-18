@@ -36,6 +36,7 @@ function getCommonComponents(opts, pages) {
 module.exports = function (grunt) {
     grunt.registerMultiTask('moonstickscss', 'A task for compiling moonsticks assets', function () {
         var opts = this.options();
+        var done = this.async();
 
         function globComponentStylesheets (components) {
             var componentsMiniMap = process.cwd() + '/' + opts.componentBase + '/{' + components.join(',');
@@ -109,7 +110,7 @@ module.exports = function (grunt) {
                     grunt.log.writeln('File "' + dest[i] + '" created.');
                 });
 
-            [common]
+            return [common]
                 .map(globComponentStylesheets)
                 .map(addStylesheetToSassData)
                 .map(prefixBaseFileToSassData)
@@ -123,7 +124,7 @@ module.exports = function (grunt) {
                     grunt.log.writeln('File "' + path.join(dest[0], '../common.css') + '" created.');
                 });
 
-        }).catch(function (err) {
+        }).then(done).catch(function (err) {
             grunt.fail.fatal(err);
         });
     });
