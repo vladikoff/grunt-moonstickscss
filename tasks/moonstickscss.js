@@ -18,7 +18,7 @@ function getComponentsFromSlots(page) {
 
 function getCommonComponents(opts, pages) {
     var seen = {};
-    return _.uniq(_.flatten(pages).reduce(function (commonComponents, componentName) {
+    return _.flatten(pages).reduce(function (commonComponents, componentName) {
         if (opts.skipCommon.indexOf(componentName) > -1) {
             return commonComponents;
         }
@@ -30,7 +30,7 @@ function getCommonComponents(opts, pages) {
 
         seen[componentName] = 1;
         return commonComponents;
-    }, []));
+    }, []);
 }
 
 module.exports = function (grunt) {
@@ -93,6 +93,8 @@ module.exports = function (grunt) {
                 return page.dest;
             });
             var common = getCommonComponents(opts, pages);
+            common = _.flatten(common);
+            common = _.uniq(common);
 
             pages
                 .map(function (components) {
