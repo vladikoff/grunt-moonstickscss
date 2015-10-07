@@ -33,7 +33,8 @@ module.exports = function (grunt) {
             options: {
                 baseSassFile: 'test/fixtures/css/global.scss',
                 baseCommonFile: 'test/fixtures/css/global.scss',
-                styleDirectory: ''
+                styleDirectory: '',
+                commonPath: '/'
             },
             laterooms: {
                 options: {
