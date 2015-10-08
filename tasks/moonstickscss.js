@@ -122,8 +122,12 @@ module.exports = function (grunt) {
                 })
                 .map(renderCssFromData)
                 .forEach(function (css) {
-                    grunt.file.write(path.join(dest[0], '../common.css'), css.css);
-                    grunt.log.writeln('File "' + path.join(dest[0], '../common.css') + '" created.');
+                    var commonPath = '../';
+                    if (opts.commonPath) {
+                        commonPath = opts.commonPath;
+                    }
+                    grunt.file.write(path.join(dest[0], commonPath, '../common.css'), css.css);
+                    grunt.log.writeln('File "' + path.join(dest[0], commonPath, '../common.css') + '" created.');
                 });
 
         }).then(done).catch(function (err) {
