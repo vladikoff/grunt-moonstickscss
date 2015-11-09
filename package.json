@@ -43,6 +43,6 @@
     "extend-json": "^1.5.3",
     "glob": "^5.0.14",
     "lodash": "^3.10.1",
-    "node-sass": "^3.2.0"
+    "node-sass": "^3.4.1"
   }
 }
