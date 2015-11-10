@@ -41,6 +41,7 @@
   "dependencies": {
     "bluebird": "^2.9.34",
     "extend-json": "^1.5.3",
+    "fs-extra": "^0.26.0",
     "glob": "^5.0.14",
     "lodash": "^3.10.1",
     "node-sass": "^3.4.1"

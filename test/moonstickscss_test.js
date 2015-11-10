@@ -23,20 +23,36 @@ var grunt = require('grunt');
 */
 
 exports.moonstickscss = {
-    setUp: function (done) {
+    setUp: function(done) {
         // setup here if necessary
         done();
     },
-    all_custom_options: function (test) {
-        test.expect(2);
+    all_custom_options: function(test) {
+        test.expect(4);
 
-        var actual = grunt.file.read('tmp/test.css');
-        var expected = grunt.file.read('test/expected.scss');
-        test.equal(actual, expected, 'should compile the fixtures using custom options.');
+        var actual_abrand = grunt.file
+            .read('tmp/abrand/test.css');
+        var expected_abrand = grunt.file
+            .read('test/expected/abrand.scss');
+        test.equal(actual_abrand, expected_abrand, 'should compile the fixtures using custom options.');
 
-       var actualCommon = grunt.file.read('tmp/common.css');
-       var expectedCommon = grunt.file.read('test/expected-common.scss');
-       test.equal(actualCommon, expectedCommon, 'should compile the fixtures using custom options.');
+        var actual_another = grunt.file
+            .read('tmp/another/test.css');
+        var expected_another = grunt.file
+            .read('test/expected/another.scss');
+        test.equal(actual_another, expected_another, 'should compile the fixtures using custom options.');
+
+        var actualCommon_abrand = grunt.file
+            .read('tmp/abrand/common.css');
+        var expectedCommon_abrand = grunt.file
+            .read('test/expected/abrand-common.scss');
+        test.equal(actualCommon_abrand, expectedCommon_abrand, 'should compile the fixtures using custom options.');
+
+        var actualCommon_another = grunt.file
+            .read('tmp/another/common.css');
+        var expectedCommon_another = grunt.file
+            .read('test/expected/another-common.scss');
+        test.equal(actualCommon_another, expectedCommon_another, 'should compile the fixtures using custom options.');
 
         test.done();
     }
